@@ -1,8 +1,16 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getOrCreateAppUser } from "@/lib/users";
+import { updateProfile } from "./actions";
 
-export default async function AccountPage() {
+type AccountPageProps = {
+  searchParams: Promise<{
+    updated?: string;
+  }>;
+};
+
+export default async function AccountPage({ searchParams }: AccountPageProps) {
+  const params = await searchParams;
   const { userId } = await auth();
 
   if (!userId) {
@@ -37,38 +45,78 @@ export default async function AccountPage() {
 
         <h1 className="mt-3 text-4xl font-semibold">Account Settings</h1>
 
-        <p className="mt-4 max-w-2xl text-[#5f574f]">
-          This is where users will manage their profile, contact details, and
-          account preferences.
-        </p>
+        {params.updated === "1" ? (
+  <div className="mt-6 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-800">
+    Profile saved.
+  </div>
+) : null}
 
         <div className="mt-10 rounded-3xl border border-[#e2d6c4] bg-white p-6 shadow-sm">
           <h2 className="text-2xl font-semibold">Profile</h2>
 
-          <dl className="mt-6 grid gap-5 sm:grid-cols-2">
+          <form action={updateProfile} className="mt-6 grid gap-5 sm:grid-cols-2">
             <div>
-              <dt className="text-sm font-medium text-[#5f574f]">Name</dt>
-              <dd className="mt-1 font-semibold">
-                {[appUser.firstName, appUser.lastName].filter(Boolean).join(" ") ||
-                  "Not provided"}
-              </dd>
+              <label
+                htmlFor="firstName"
+                className="text-sm font-medium text-[#5f574f]"
+              >
+                First name
+              </label>
+              <input
+                id="firstName"
+                name="firstName"
+                defaultValue={appUser.firstName ?? ""}
+                className="mt-2 w-full rounded-2xl border border-[#d8cbb8] bg-white px-4 py-3 outline-none focus:border-[#8a5a2b]"
+              />
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-[#5f574f]">Email</dt>
-              <dd className="mt-1 font-semibold">{appUser.email}</dd>
+              <label
+                htmlFor="lastName"
+                className="text-sm font-medium text-[#5f574f]"
+              >
+                Last name
+              </label>
+              <input
+                id="lastName"
+                name="lastName"
+                defaultValue={appUser.lastName ?? ""}
+                className="mt-2 w-full rounded-2xl border border-[#d8cbb8] bg-white px-4 py-3 outline-none focus:border-[#8a5a2b]"
+              />
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-[#5f574f]">App role</dt>
-              <dd className="mt-1 font-semibold">{appUser.role}</dd>
+              <p className="text-sm font-medium text-[#5f574f]">Email</p>
+              <p className="mt-2 rounded-2xl border border-[#e2d6c4] bg-[#f7f3ec] px-4 py-3 font-semibold">
+                {appUser.email}
+              </p>
             </div>
 
             <div>
-              <dt className="text-sm font-medium text-[#5f574f]">Clerk user ID</dt>
-              <dd className="mt-1 break-all font-mono text-sm">{appUser.clerkId}</dd>
+              <p className="text-sm font-medium text-[#5f574f]">App role</p>
+              <p className="mt-2 rounded-2xl border border-[#e2d6c4] bg-[#f7f3ec] px-4 py-3 font-semibold">
+                {appUser.role}
+              </p>
             </div>
-          </dl>
+
+            <div className="sm:col-span-2">
+              <p className="text-sm font-medium text-[#5f574f]">
+                Clerk user ID
+              </p>
+              <p className="mt-2 break-all rounded-2xl border border-[#e2d6c4] bg-[#f7f3ec] px-4 py-3 font-mono text-sm">
+                {appUser.clerkId}
+              </p>
+            </div>
+
+            <div className="sm:col-span-2">
+              <button
+                type="submit"
+                className="rounded-full bg-[#241f1a] px-6 py-3 text-sm font-semibold text-white hover:bg-[#3a332b]"
+              >
+                Save profile
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </main>
