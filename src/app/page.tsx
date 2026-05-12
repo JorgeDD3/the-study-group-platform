@@ -1,11 +1,18 @@
+import Image from "next/image";
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#f7f3ec] text-[#241f1a]">
       <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 py-8">
         <header className="flex items-center justify-between">
-          <p className="text-lg font-semibold tracking-tight">
-            The Study Group
-          </p>
+          <Image
+  src="/TSG Secondary Logo.png"
+  alt="The Study Group"
+  width={180}
+  height={80}
+  priority
+  className="h-auto w-40"
+/>
 
           <nav className="hidden items-center gap-6 text-sm font-medium text-[#5f574f] sm:flex">
             <a href="#how-it-works" className="hover:text-[#241f1a]">
